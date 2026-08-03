@@ -357,7 +357,17 @@
             const anchoSlide = carrusel.clientWidth;
             carrusel.scrollBy({ left: anchoSlide * direccion, behavior: 'smooth' });
         }
-
+function compartir() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Monbá QR',
+            text: '¡Mira este destino en Barlovento!',
+            url: window.location.href
+        });
+    } else {
+        alert("Copia este enlace para compartir: " + window.location.href);
+    }
+}
         // Ejecutar al iniciar
         document.addEventListener("DOMContentLoaded", cargarDirectorio);
     </script>
