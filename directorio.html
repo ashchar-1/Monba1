@@ -49,7 +49,6 @@
             height: 100%;
             -webkit-overflow-scrolling: touch;
         }
-        /* Ocultar barra de scroll */
         .carrusel-slides::-webkit-scrollbar { display: none; }
         .carrusel-slides { -ms-overflow-style: none; scrollbar-width: none; }
 
@@ -61,7 +60,6 @@
             background-position: center;
         }
 
-        /* Botones de control manual */
         .btn-carrusel {
             position: absolute;
             top: 50%;
@@ -108,6 +106,41 @@
         }
 
         /* =========================================
+           BANNER COQUETO A RESTAURANTE.HTML
+           ========================================= */
+        .banner-restaurante {
+            margin: 20px 15px;
+            background: linear-gradient(135deg, var(--color-secundario), var(--color-primario));
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0, 119, 182, 0.3);
+            transition: transform 0.2s;
+        }
+        .banner-restaurante:active { transform: scale(0.98); }
+        .banner-restaurante a {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .banner-restaurante i {
+            font-size: 2rem;
+            background: rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 50%;
+        }
+        .banner-restaurante span {
+            flex: 1;
+            margin: 0 15px;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* =========================================
            DIRECTORIO DE COMERCIOS (MENÚ/PRECIOS)
            ========================================= */
         .directorio-seccion {
@@ -142,7 +175,41 @@
         }
 
         /* =========================================
-           BOTÓN GENERAR CARTEL QR
+           BARRA DE ACCIONES (RUTA, COMPARTIR, QR)
+           ========================================= */
+        .barra-acciones {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-accion {
+            background: none;
+            border: none;
+            color: var(--color-primario);
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-accion i {
+            font-size: 1.3rem;
+            color: var(--color-secundario);
+            background-color: var(--color-arena);
+            padding: 10px;
+            border-radius: 50%;
+        }
+        .btn-accion:active i { transform: scale(0.9); }
+
+        /* =========================================
+           BOTÓN DESCARGAR CARTEL QR
            ========================================= */
         .zona-qr {
             text-align: center; padding: 20px 15px 40px 15px;
@@ -156,45 +223,49 @@
         }
         .btn-qr:active { transform: scale(0.98); }
 
-
-        /* Estilos para la barra de botones rápidos */
-.barra-acciones {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-}
-
-.btn-accion {
-    background: none;
-    border: none;
-    color: var(--color-primario);
-    font-size: 0.9rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.btn-accion i {
-    font-size: 1.3rem;
-    color: var(--color-secundario);
-    background-color: var(--color-arena);
-    padding: 10px;
-    border-radius: 50%;
-}
-.btn-accion:active i { transform: scale(0.9); }
+        /* =========================================
+           MODAL QR
+           ========================================= */
+        .modal-qr {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+        .modal-qr.activo {
+            display: flex;
+        }
+        .contenido-qr {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 300px;
+            width: 90%;
+        }
+        .contenido-qr img {
+            width: 200px;
+            height: 200px;
+            margin: 15px 0;
+        }
+        .btn-cerrar-qr {
+            background: var(--color-primario);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
     </style>
 </head>
 <body>
 
     <header>
-        <!-- Regresa dinámicamente a la página anterior del historial -->
         <button onclick="history.back()" class="btn-volver"><i class="fa-solid fa-arrow-left"></i></button>
         <h1 id="titulo-header">Cargando...</h1>
     </header>
@@ -220,12 +291,24 @@
             <div class="servicios-tags" id="contenedor-servicios">
                 <!-- Etiquetas de servicios se inyectan con JS -->
             </div>
+
+            <!-- Barra de acciones -->
+            <div class="barra-acciones">
+                <button class="btn-accion" id="btn-ruta"><i class="fa-solid fa-route"></i> Ruta</button>
+                <button class="btn-accion" id="btn-compartir"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
+                <button class="btn-accion" id="btn-ver-qr"><i class="fa-solid fa-qrcode"></i> Ver QR</button>
+            </div>
         </div>
-  <div class="barra-acciones">
-    <button class="btn-accion" onclick="alert('Abriendo Google Maps...')"><i class="fa-solid fa-route"></i> Ruta</button>
-    <button class="btn-accion" onclick="compartir()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
-    <button class="btn-accion" onclick="alert('Mostrando QR de la Playa...')"><i class="fa-solid fa-qrcode"></i> Ver QR</button>
-</div>  
+
+        <!-- Banner coqueto a restaurante.html -->
+        <div class="banner-restaurante" id="banner-restaurante">
+            <a href="#" id="enlace-restaurante">
+                <i class="fa-solid fa-utensils"></i>
+                <span>¿Antojo de algo especial?<br>Descubre los mejores restaurantes de la zona</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
         <!-- Listado de Comercios / Menú -->
         <div class="directorio-seccion">
             <h3>Directorio Comercial & Precios</h3>
@@ -241,6 +324,16 @@
             </button>
         </div>
 
+        <!-- Modal QR -->
+        <div class="modal-qr" id="modal-qr">
+            <div class="contenido-qr">
+                <h4>Escanea este código</h4>
+                <img id="imagen-qr" src="" alt="Código QR">
+                <br>
+                <button class="btn-cerrar-qr" onclick="cerrarQR()">Cerrar</button>
+            </div>
+        </div>
+
     </main>
 
     <!-- Pantalla de Carga -->
@@ -250,11 +343,12 @@
     </div>
 
     <script>
-        // Base de Datos de Destinos Finales
+           // Base de Datos de Destinos Finales
         const destinosDB = {
             "machurucual": {
                 nombre: "Playa Machurucuto",
                 ubicacion: "Municipio Pedro Gual, Vía Cúpira",
+                mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.1558,-65.7766", // Coordenadas genéricas
                 imagenes: [
                     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
                     "https://images.unsplash.com/photo-1519046904884-53103b34b206?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
@@ -275,6 +369,7 @@
             "los-totumos": {
                 nombre: "Playa Los Totumos",
                 ubicacion: "Municipio Brión, Higuerote",
+                mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.4908,-66.1950",
                 imagenes: [
                     "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
                     "https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
@@ -292,15 +387,17 @@
             }
         };
 
-        // Extraer ID de la URL
+        // Parámetros de URL
         function obtenerParametroURL(nombre) {
             return new URLSearchParams(window.location.search).get(nombre);
         }
 
-        // Lógica de carga
+        let lugarActual = null;
+
         function cargarDirectorio() {
             const idLugar = obtenerParametroURL('id');
             const lugar = destinosDB[idLugar];
+            lugarActual = lugar;
             const contenedor = document.getElementById('contenido-directorio');
             const estado = document.getElementById('mensaje-estado');
 
@@ -310,7 +407,7 @@
                 document.getElementById('lugar-ubicacion').textContent = lugar.ubicacion;
                 document.getElementById('lugar-descripcion').textContent = lugar.descripcion;
 
-                // Cargar imágenes del carrusel (Manual)
+                // Cargar imágenes del carrusel
                 const contenedorImagenes = document.getElementById('carrusel-imagenes');
                 let htmlImagenes = '';
                 lugar.imagenes.forEach(img => {
@@ -326,7 +423,7 @@
                 });
                 contenedorServicios.innerHTML = htmlServicios;
 
-                // Cargar comercios y precios
+                // Cargar comercios
                 const contenedorComercios = document.getElementById('contenedor-comercios');
                 let htmlComercios = '';
                 lugar.comercios.forEach(comercio => {
@@ -346,7 +443,27 @@
                 });
                 contenedorComercios.innerHTML = htmlComercios;
 
-                // Mostrar todo
+                // Configurar enlace del banner restaurante (con municipio si existe)
+                const municipio = obtenerParametroURL('municipio') || '';
+                const enlaceRest = document.getElementById('enlace-restaurante');
+                enlaceRest.href = municipio ? `restaurante.html?municipio=${municipio}` : 'restaurante.html';
+
+                // Configurar botón Ruta
+                document.getElementById('btn-ruta').onclick = () => {
+                    if (lugar.mapsNavegacion) {
+                        window.open(lugar.mapsNavegacion, '_blank');
+                    } else {
+                        alert('Ubicación no disponible para ruta.');
+                    }
+                };
+
+                // Configurar botón Compartir
+                document.getElementById('btn-compartir').onclick = compartir;
+
+                // Configurar botón Ver QR
+                document.getElementById('btn-ver-qr').onclick = mostrarQR;
+
+                // Mostrar contenido
                 estado.style.display = 'none';
                 contenedor.style.display = 'block';
             } else {
@@ -355,24 +472,44 @@
             }
         }
 
-        // Lógica del Carrusel Manual (Pasa a la siguiente foto usando el ancho de la pantalla)
+        // Carrusel manual
         function moverCarrusel(direccion) {
             const carrusel = document.getElementById('carrusel-imagenes');
             const anchoSlide = carrusel.clientWidth;
             carrusel.scrollBy({ left: anchoSlide * direccion, behavior: 'smooth' });
         }
-function compartir() {
-    if (navigator.share) {
-        navigator.share({
-            title: 'Monbá QR',
-            text: '¡Mira este destino en Barlovento!',
-            url: window.location.href
+
+        // Compartir
+        function compartir() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Monbá QR',
+                    text: '¡Mira este destino en Barlovento!',
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(window.location.href)
+                    .then(() => alert('Enlace copiado al portapapeles'))
+                    .catch(() => alert('Copia este enlace: ' + window.location.href));
+            }
+        }
+
+        // Modal QR
+        function mostrarQR() {
+            const modal = document.getElementById('modal-qr');
+            const imagenQR = document.getElementById('imagen-qr');
+            imagenQR.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.href)}`;
+            modal.classList.add('activo');
+        }
+
+        function cerrarQR() {
+            document.getElementById('modal-qr').classList.remove('activo');
+        }
+
+        document.getElementById('modal-qr').addEventListener('click', function(e) {
+            if (e.target === this) cerrarQR();
         });
-    } else {
-        alert("Copia este enlace para compartir: " + window.location.href);
-    }
-}
-        // Ejecutar al iniciar
+
         document.addEventListener("DOMContentLoaded", cargarDirectorio);
     </script>
 </body>
