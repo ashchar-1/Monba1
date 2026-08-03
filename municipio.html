@@ -176,6 +176,10 @@
         <div class="resena-tarjeta">
             <h2 id="municipio-nombre"><i class="fa-solid fa-map-location-dot"></i> </h2>
             <p id="municipio-resena"></p>
+            <div class="barra-acciones">
+    <button class="btn-accion" onclick="compartir()"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
+    <button class="btn-accion" onclick="alert('Mostrando QR del Municipio...')"><i class="fa-solid fa-qrcode"></i> Ver QR</button>
+            </div>
         </div>
 
         <!-- Categorías Estéticas -->
@@ -274,6 +278,18 @@
             }
         }
 
+        
+function compartir() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Monbá QR',
+            text: '¡Mira este destino en Barlovento!',
+            url: window.location.href
+        });
+    } else {
+        alert("Copia este enlace para compartir: " + window.location.href);
+    }
+}
         document.addEventListener("DOMContentLoaded", cargarMunicipio);
     </script>
 </body>
