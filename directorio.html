@@ -32,7 +32,7 @@
         header h1 { font-size: 1.2rem; margin: 0 auto; padding-right: 15px;}
 
         /* =========================================
-           CARRUSEL MANUAL DE IMÁGENES
+           CARRUSEL (SOLO MODO DETALLE)
            ========================================= */
         .carrusel-contenedor {
             position: relative;
@@ -40,7 +40,6 @@
             height: 35vh;
             background-color: #ddd;
         }
-        
         .carrusel-slides {
             display: flex;
             overflow-x: auto;
@@ -79,7 +78,7 @@
         .btn-next { right: 10px; }
 
         /* =========================================
-           INFORMACIÓN Y SERVICIOS
+           INFORMACIÓN (MODO DETALLE)
            ========================================= */
         .info-seccion {
             background-color: var(--color-blanco);
@@ -141,7 +140,41 @@
         }
 
         /* =========================================
-           DIRECTORIO DE COMERCIOS (MENÚ/PRECIOS)
+           LISTA DE LUGARES (MODO DIRECTORIO)
+           ========================================= */
+        .lista-lugares {
+            padding: 20px 15px;
+        }
+        .lista-lugares h3 {
+            font-size: 1.2rem; margin-bottom: 15px; color: var(--color-texto);
+            border-bottom: 2px solid var(--color-primario); padding-bottom: 5px; display: inline-block;
+        }
+
+        .tarjeta-lugar {
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-left: 4px solid var(--color-secundario);
+            text-decoration: none;
+            color: var(--color-texto);
+        }
+        .tarjeta-lugar h4 {
+            color: var(--color-primario);
+            font-size: 1.1rem;
+        }
+        .tarjeta-lugar p {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        /* =========================================
+           DIRECTORIO COMERCIOS (DENTRO DEL DETALLE)
            ========================================= */
         .directorio-seccion {
             padding: 20px 15px;
@@ -175,7 +208,7 @@
         }
 
         /* =========================================
-           BARRA DE ACCIONES (RUTA, COMPARTIR, QR)
+           BARRA DE ACCIONES
            ========================================= */
         .barra-acciones {
             display: flex;
@@ -223,9 +256,7 @@
         }
         .btn-qr:active { transform: scale(0.98); }
 
-        /* =========================================
-           MODAL QR
-           ========================================= */
+        /* MODAL QR */
         .modal-qr {
             display: none;
             position: fixed;
@@ -235,9 +266,7 @@
             justify-content: center;
             z-index: 200;
         }
-        .modal-qr.activo {
-            display: flex;
-        }
+        .modal-qr.activo { display: flex; }
         .contenido-qr {
             background: white;
             padding: 25px;
@@ -260,7 +289,6 @@
             font-weight: bold;
             cursor: pointer;
         }
-
     </style>
 </head>
 <body>
@@ -270,37 +298,43 @@
         <h1 id="titulo-header">Cargando...</h1>
     </header>
 
-    <main id="contenido-directorio" style="display: none;">
-        
-        <!-- Carrusel Manual -->
-        <div class="carrusel-contenedor">
-            <button class="btn-carrusel btn-prev" onclick="moverCarrusel(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-            <button class="btn-carrusel btn-next" onclick="moverCarrusel(1)"><i class="fa-solid fa-chevron-right"></i></button>
-            
-            <div class="carrusel-slides" id="carrusel-imagenes">
-                <!-- Las imágenes se inyectan con JS -->
+    <main id="contenido-principal" style="display: none;">
+
+        <!-- ========== MODO DETALLE (cuando llega ?id=...) ========== -->
+        <div id="vista-detalle" style="display: none;">
+            <div class="carrusel-contenedor">
+                <button class="btn-carrusel btn-prev" onclick="moverCarrusel(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                <button class="btn-carrusel btn-next" onclick="moverCarrusel(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                <div class="carrusel-slides" id="carrusel-imagenes"></div>
+            </div>
+
+            <div class="info-seccion">
+                <h2 id="lugar-nombre"></h2>
+                <div class="ubicacion"><i class="fa-solid fa-location-dot"></i> <span id="lugar-ubicacion"></span></div>
+                <p class="descripcion" id="lugar-descripcion"></p>
+                <div class="servicios-tags" id="contenedor-servicios"></div>
+                <div class="barra-acciones">
+                    <button class="btn-accion" id="btn-ruta"><i class="fa-solid fa-route"></i> Ruta</button>
+                    <button class="btn-accion" id="btn-compartir"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
+                    <button class="btn-accion" id="btn-ver-qr"><i class="fa-solid fa-qrcode"></i> Ver QR</button>
+                </div>
+            </div>
+
+            <div class="directorio-seccion">
+                <h3>Directorio Comercial & Precios</h3>
+                <div id="contenedor-comercios"></div>
             </div>
         </div>
 
-        <!-- Información del Lugar -->
-        <div class="info-seccion">
-            <h2 id="lugar-nombre">Nombre del Lugar</h2>
-            <div class="ubicacion"><i class="fa-solid fa-location-dot"></i> <span id="lugar-ubicacion">Ubicación</span></div>
-            <p class="descripcion" id="lugar-descripcion">Descripción del lugar.</p>
-            
-            <div class="servicios-tags" id="contenedor-servicios">
-                <!-- Etiquetas de servicios se inyectan con JS -->
-            </div>
-
-            <!-- Barra de acciones -->
-            <div class="barra-acciones">
-                <button class="btn-accion" id="btn-ruta"><i class="fa-solid fa-route"></i> Ruta</button>
-                <button class="btn-accion" id="btn-compartir"><i class="fa-solid fa-share-nodes"></i> Compartir</button>
-                <button class="btn-accion" id="btn-ver-qr"><i class="fa-solid fa-qrcode"></i> Ver QR</button>
+        <!-- ========== MODO LISTA (cuando llega ?municipio=...&categoria=...) ========== -->
+        <div id="vista-lista" style="display: none;">
+            <div class="lista-lugares">
+                <h3 id="titulo-lista">Lugares encontrados</h3>
+                <div id="contenedor-lista"></div>
             </div>
         </div>
 
-        <!-- Banner coqueto a restaurante.html -->
+        <!-- Banner a restaurante.html (común) -->
         <div class="banner-restaurante" id="banner-restaurante">
             <a href="#" id="enlace-restaurante">
                 <i class="fa-solid fa-utensils"></i>
@@ -309,15 +343,7 @@
             </a>
         </div>
 
-        <!-- Listado de Comercios / Menú -->
-        <div class="directorio-seccion">
-            <h3>Directorio Comercial & Precios</h3>
-            <div id="contenedor-comercios">
-                <!-- Las tarjetas de comercio se inyectan con JS -->
-            </div>
-        </div>
-
-        <!-- Zona de descarga de Cartel QR -->
+        <!-- Zona QR común -->
         <div class="zona-qr">
             <button class="btn-qr" onclick="alert('Descargando cartel QR en formato PDF...')">
                 <i class="fa-solid fa-qrcode"></i> Descargar Cartel QR de este lugar
@@ -343,46 +369,343 @@
     </div>
 
     <script>
-           // Base de Datos de Destinos Finales
-        const destinosDB = {
-            "machurucual": {
-                nombre: "Playa Machurucuto",
-                ubicacion: "Municipio Pedro Gual, Vía Cúpira",
-                mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.1558,-65.7766", // Coordenadas genéricas
-                imagenes: [
-                    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                    "https://images.unsplash.com/photo-1519046904884-53103b34b206?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                    "https://images.unsplash.com/photo-1506477331477-33d5d8b3dc85?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+        // ============================================
+        // BASE DE DATOS DE TODOS LOS MUNICIPIOS
+        // ============================================
+        const lugaresDB = {
+            // ---------- PEDRO GUAL ----------
+            "pedro-gual": {
+                playas: [
+                    {
+                        id: "machurucual",
+                        nombre: "Playa Machurucuto",
+                        ubicacion: "Municipio Pedro Gual, Vía Cúpira",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.1558,-65.7766",
+                        imagenes: [
+                            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                            "https://images.unsplash.com/photo-1519046904884-53103b34b206?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                        ],
+                        descripcion: "Donde el río abraza al mar. Arena extensa, oleaje moderado y restaurantes de playa.",
+                        servicios: [
+                            { nombre: "Restaurantes", icono: "fa-utensils" },
+                            { nombre: "Estacionamiento", icono: "fa-car" },
+                            { nombre: "Alquiler de Toldos", icono: "fa-umbrella-beach" }
+                        ],
+                        comercios: [
+                            { negocio: "La Desembocadura", producto: "Pescado Frito", precio: "$12", telefono: "584120000001" },
+                            { negocio: "Parador El Cocal", producto: "Empanadas", precio: "$4", telefono: "584120000002" }
+                        ]
+                    }
                 ],
-                descripcion: "Un paraje impresionante donde el río desemboca en el mar. Ideal para relajarse, caminar por la extensa arena y disfrutar de la brisa oriental. El oleaje es moderado y cuenta con una rica oferta gastronómica local.",
-                servicios: [
-                    { nombre: "Restaurantes", icono: "fa-utensils" },
-                    { nombre: "Estacionamiento", icono: "fa-car" },
-                    { nombre: "Alquiler de Toldos", icono: "fa-umbrella-beach" }
+                comer: [
+                    {
+                        id: "comida-cupira",
+                        nombre: "Parador Turístico Cupira",
+                        ubicacion: "Carretera Nacional, Cupira",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.1558,-65.7766",
+                        imagenes: ["https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Famoso por su casabe recién hecho y cochino frito. Parada obligatoria.",
+                        servicios: [{ nombre: "Comida típica", icono: "fa-utensils" }],
+                        comercios: [{ negocio: "Parador Cupira", producto: "Casabe con Cochino", precio: "$7", telefono: "584120000003" }]
+                    }
                 ],
-                comercios: [
-                    { negocio: "Restaurante La Desembocadura", producto: "Pescado Frito con Tostones", precio: "$12", telefono: "584120000000" },
-                    { negocio: "Parador El Cocal", producto: "Ración de Empanadas (Cazón)", precio: "$4", telefono: "584120000000" },
-                    { negocio: "Alquileres Machurucuto", producto: "1 Toldo + 2 Sillas", precio: "$5", telefono: "584120000000" }
+                dormir: [
+                    {
+                        id: "posadas-pedrogual",
+                        nombre: "Posada Brisas de Oriente",
+                        ubicacion: "Calle principal, Cupira",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.1558,-65.7766",
+                        imagenes: ["https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Habitaciones cómodas con aire acondicionado y baño privado.",
+                        servicios: [{ nombre: "WiFi", icono: "fa-wifi" }],
+                        comercios: [{ negocio: "Brisas de Oriente", producto: "Habitación doble", precio: "$25", telefono: "584120000004" }]
+                    }
+                ],
+                compras: [
+                    {
+                        id: "casabe-cupira",
+                        nombre: "Casabe Artesanal Doña María",
+                        ubicacion: "Vía principal, Cupira",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.1558,-65.7766",
+                        imagenes: ["https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Casabe tradicional de yuca amarga, elaborado en budare.",
+                        servicios: [{ nombre: "Venta al mayor", icono: "fa-store" }],
+                        comercios: [{ negocio: "Doña María", producto: "Casabe (unidad)", precio: "$2", telefono: "584120000005" }]
+                    }
                 ]
             },
-            "los-totumos": {
-                nombre: "Playa Los Totumos",
-                ubicacion: "Municipio Brión, Higuerote",
-                mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.4908,-66.1950",
-                imagenes: [
-                    "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                    "https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+
+          // ---------- BRIÓN ----------
+            "brion": {
+                playas: [
+                    {
+                        id: "los-totumos",
+                        nombre: "Playa Los Totumos",
+                        ubicacion: "Municipio Brión, Higuerote",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.4908,-66.1950",
+                        imagenes: [
+                            "https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                            "https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                        ],
+                        descripcion: "Aguas mansas, ideal para niños. Servicios de toldos y comida.",
+                        servicios: [
+                            { nombre: "Baños", icono: "fa-restroom" },
+                            { nombre: "Deportes acuáticos", icono: "fa-water" }
+                        ],
+                        comercios: [
+                            { negocio: "Kiosko El Sabor Playero", producto: "Hervido de Pescado", precio: "$8", telefono: "584120000006" },
+                            { negocio: "Banana Boat Totumos", producto: "Paseo en Banana", precio: "$3", telefono: "584120000007" }
+                        ]
+                    }
                 ],
-                descripcion: "Una de las bahías más tranquilas de Barlovento. Sin oleaje fuerte, es perfecta para el disfrute seguro de niños y familias. Aguas cristalinas y arena fina.",
-                servicios: [
-                    { nombre: "Baños Públicos", icono: "fa-restroom" },
-                    { nombre: "Comida", icono: "fa-burger" },
-                    { nombre: "Deportes Acuáticos", icono: "fa-water" }
+                comer: [
+                    {
+                        id: "comida-brion",
+                        nombre: "Restaurante El Ancla",
+                        ubicacion: "Av. Principal, Higuerote",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.4908,-66.1950",
+                        imagenes: ["https://images.unsplash.com/photo-1502301103665-0b95cc738daf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Mariscos frescos y parrilla. Ambiente familiar.",
+                        servicios: [{ nombre: "Bar", icono: "fa-wine-glass" }],
+                        comercios: [{ negocio: "El Ancla", producto: "Parrillada Marina", precio: "$18", telefono: "584120000008" }]
+                    }
                 ],
-                comercios: [
-                    { negocio: "Kiosko El Sabor Playero", producto: "Hervido de Pescado", precio: "$8", telefono: "584120000000" },
-                    { negocio: "Banana Boat Totumos", producto: "Paseo en Banana (x Persona)", precio: "$3", telefono: "584120000000" }
+                dormir: [
+                    {
+                        id: "posadas-brion",
+                        nombre: "Posada Los Delfines",
+                        ubicacion: "Calle 5, Higuerote",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.4908,-66.1950",
+                        imagenes: ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "A 5 minutos de la playa. Piscina y desayuno incluido.",
+                        servicios: [{ nombre: "Piscina", icono: "fa-swimming-pool" }],
+                        comercios: [{ negocio: "Los Delfines", producto: "Habitación familiar", precio: "$40", telefono: "584120000009" }]
+                    }
+                ],
+                rutas: [
+                    {
+                        id: "rutas-brion",
+                        nombre: "Paseo en Lancha por el Río Tuy",
+                        ubicacion: "Embarque en Higuerote",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.4908,-66.1950",
+                        imagenes: ["https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Recorrido de 2 horas por los manglares.",
+                        servicios: [{ nombre: "Guía", icono: "fa-user" }],
+                        comercios: [{ negocio: "Tours Brión", producto: "Tour por persona", precio: "$15", telefono: "584120000010" }]
+                    }
+                ]
+            },
+
+            // ---------- ACEVEDO ----------
+            "acevedo": {
+                naturaleza: [
+                    {
+                        id: "senderismo-acevedo",
+                        nombre: "Cascada El Encanto",
+                        ubicacion: "Municipio Acevedo, cerca de Caucagua",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.2833,-66.3667",
+                        imagenes: ["https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Hermosa caída de agua rodeada de bosque tropical. Excursión de 1 hora.",
+                        servicios: [{ nombre: "Guía local", icono: "fa-hiking" }],
+                        comercios: [{ negocio: "Guía José", producto: "Tour guiado", precio: "$10", telefono: "584120000011" }]
+                    }
+                ],
+                comer: [
+                    {
+                        id: "comida-acevedo",
+                        nombre: "Dulcería La Tradición",
+                        ubicacion: "Calle Bolívar, Caucagua",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.2833,-66.3667",
+                        imagenes: ["https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Dulces criollos elaborados con cacao de la zona.",
+                        servicios: [{ nombre: "Degustación", icono: "fa-candy-cane" }],
+                        comercios: [{ negocio: "La Tradición", producto: "Caja de chocolates", precio: "$6", telefono: "584120000012" }]
+                    }
+                ],
+                dormir: [
+                    {
+                        id: "posada-acevedo",
+                        nombre: "Posada El Cacaotal",
+                        ubicacion: "Vía Caucagua - Mamporal",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.2833,-66.3667",
+                        imagenes: ["https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Alojamiento rural en medio de haciendas de cacao.",
+                        servicios: [{ nombre: "Caminatas", icono: "fa-tree" }],
+                        comercios: [{ negocio: "El Cacaotal", producto: "Noche por persona", precio: "$20", telefono: "584120000013" }]
+                    }
+                ],
+                compras: [
+                    {
+                        id: "cacao-acevedo",
+                        nombre: "Cacao Barlovento 70%",
+                        ubicacion: "Plaza Sucre, Caucagua",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.2833,-66.3667",
+                        imagenes: ["https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Tabletas de chocolate artesanal.",
+                        servicios: [{ nombre: "Venta directa", icono: "fa-store" }],
+                        comercios: [{ negocio: "Cacao Barlovento", producto: "Tableta 100g", precio: "$4", telefono: "584120000014" }]
+                    }
+                ]
+            },
+
+            // ---------- ANDRÉS BELLO ----------
+            "andres-bello": {
+                cultura: [
+                    {
+                        id: "tambores-andresbello",
+                        nombre: "Taller de Tambores San José",
+                        ubicacion: "San José de Barlovento, calle El Tamarindo",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.2833,-65.9833",
+                        imagenes: ["https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Aprende a fabricar y tocar tambores con maestros locales.",
+                        servicios: [{ nombre: "Clases", icono: "fa-drum" }],
+                        comercios: [{ negocio: "Taller Tambores", producto: "Curso 2h", precio: "$12", telefono: "584120000015" }]
+                    }
+                ],
+                comer: [
+                    {
+                        id: "comida-andresbello",
+                        nombre: "Fritanga Doña Rosa",
+                        ubicacion: "Calle principal, San José",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.2833,-65.9833",
+                        imagenes: ["https://images.unsplash.com/photo-1502301103665-0b95cc738daf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Arepas, empanadas y jugos naturales.",
+                        servicios: [{ nombre: "Comida rápida", icono: "fa-hamburger" }],
+                        comercios: [{ negocio: "Doña Rosa", producto: "Empanada de cazón", precio: "$2", telefono: "584120000016" }]
+                    }
+                ],
+                dormir: [
+                    {
+                        id: "posada-andresbello",
+                        nombre: "Posada El Tamborero",
+                        ubicacion: "San José de Barlovento",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.2833,-65.9833",
+                        imagenes: ["https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Ambiente cultural, rodeado de artesanías.",
+                        servicios: [{ nombre: "Patio", icono: "fa-tree" }],
+                        comercios: [{ negocio: "El Tamborero", producto: "Habitación simple", precio: "$18", telefono: "584120000017" }]
+                    }
+                ],
+                naturaleza: [
+                    {
+                        id: "rio-andresbello",
+                        nombre: "Balneario Río San José",
+                        ubicacion: "A 10 min del pueblo",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.2833,-65.9833",
+                        imagenes: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Pozas de agua dulce entre piedras.",
+                        servicios: [{ nombre: "Kioskos", icono: "fa-store" }],
+                        comercios: [{ negocio: "Kiosko Río", producto: "Refresco", precio: "$1", telefono: "584120000018" }]
+                    }
+                ]
+            },
+
+            // ---------- BUROZ ----------
+            "buroz": {
+                playas: [
+                    {
+                        id: "playa-buroz",
+                        nombre: "Playa Los Ángeles",
+                        ubicacion: "Cerca de Mamporal",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.3667,-66.1333",
+                        imagenes: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Playa virgen de aguas cristalinas, ideal para escapar.",
+                        servicios: [{ nombre: "Sin servicios", icono: "fa-exclamation-triangle" }],
+                        comercios: [{ negocio: "Vendedor ambulante", producto: "Agua de coco", precio: "$2", telefono: "584120000019" }]
+                    }
+                ],
+                comer: [
+                    {
+                        id: "comida-buroz",
+                        nombre: "Cevichería El Mangle",
+                        ubicacion: "Malecón de Mamporal",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.3667,-66.1333",
+                        imagenes: ["https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Ceviches frescos con pescado del día.",
+                        servicios: [{ nombre: "Vista al mar", icono: "fa-water" }],
+                        comercios: [{ negocio: "El Mangle", producto: "Ceviche de mero", precio: "$9", telefono: "584120000020" }]
+                    }
+                ],
+                dormir: [
+                    {
+                        id: "posada-buroz",
+                        nombre: "Posada La Hacienda",
+                        ubicacion: "Calle Real, Mamporal",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.3667,-66.1333",
+                        imagenes: ["https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Casona colonial restaurada.",
+                        servicios: [{ nombre: "Desayuno", icono: "fa-coffee" }],
+                        comercios: [{ negocio: "La Hacienda", producto: "Habitación matrimonial", precio: "$30", telefono: "584120000021" }]
+                    }
+                ],
+                compras: [
+                    {
+                        id: "cacao-buroz",
+                        nombre: "Hacienda Cacao Buroz",
+                        ubicacion: "Mamporal",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.3667,-66.1333",
+                        imagenes: ["https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Venta de cacao en grano y chocolate.",
+                        servicios: [{ nombre: "Visita guiada", icono: "fa-seedling" }],
+                        comercios: [{ negocio: "Hacienda", producto: "Kg de cacao", precio: "$5", telefono: "584120000022" }]
+                    }
+                ]
+            },
+
+            // ---------- PÁEZ ----------
+            "paez": {
+                playas: [
+                    {
+                        id: "playa-paez",
+                        nombre: "Playa Río Chico",
+                        ubicacion: "Malecón de Río Chico",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.3167,-65.9833",
+                        imagenes: ["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Playa amplia con restaurantes y música en vivo fines de semana.",
+                        servicios: [
+                            { nombre: "Restaurantes", icono: "fa-utensils" },
+                            { nombre: "Música", icono: "fa-music" }
+                        ],
+                        comercios: [
+                            { negocio: "Rest. El Timón", producto: "Pargo Rojo", precio: "$14", telefono: "584120000023" }
+                        ]
+                    }
+                ],
+                comer: [
+                    {
+                        id: "comida-paez",
+                        nombre: "Marisquería El Río",
+                        ubicacion: "Calle La Marina, Río Chico",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.3167,-65.9833",
+                        imagenes: ["https://images.unsplash.com/photo-1502301103665-0b95cc738daf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Especialidad en mariscos. Prueba la cazuela.",
+                        servicios: [{ nombre: "Terraza", icono: "fa-sun" }],
+                        comercios: [{ negocio: "El Río", producto: "Cazuela de Mariscos", precio: "$16", telefono: "584120000024" }]
+                    }
+                ],
+                dormir: [
+                    {
+                        id: "posada-paez",
+                        nombre: "Posada Brisas del Mar",
+                        ubicacion: "Av. Costanera, Río Chico",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.3167,-65.9833",
+                        imagenes: ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Frente al mar, con piscina y estacionamiento.",
+                        servicios: [{ nombre: "Aire acondicionado", icono: "fa-wind" }],
+                        comercios: [{ negocio: "Brisas del Mar", producto: "Habitación doble", precio: "$35", telefono: "584120000025" }]
+                    }
+                ],
+                rutas: [
+                    {
+                        id: "rutas-paez",
+                        nombre: "Tour en Kayak Río Tuy",
+                        ubicacion: "Salida desde Río Chico",
+                        mapsNavegacion: "https://www.google.com/maps/dir/?api=1&destination=10.3167,-65.9833",
+                        imagenes: ["https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"],
+                        descripcion: "Remonta el río entre manglares, avistamiento de aves.",
+                        servicios: [{ nombre: "Kayak doble", icono: "fa-person-swimming" }],
+                        comercios: [{ negocio: "EcoAventuras", producto: "Alquiler 2h", precio: "$10", telefono: "584120000026" }]
+                    }
                 ]
             }
         };
@@ -390,93 +713,134 @@
         // Parámetros de URL
         function obtenerParametroURL(nombre) {
             return new URLSearchParams(window.location.search).get(nombre);
-        }
-
-        let lugarActual = null;
-
+                                     }
+        // ============================================
+        // LÓGICA PRINCIPAL
+        // ============================================
         function cargarDirectorio() {
             const idLugar = obtenerParametroURL('id');
-            const lugar = destinosDB[idLugar];
-            lugarActual = lugar;
-            const contenedor = document.getElementById('contenido-directorio');
+            const municipio = obtenerParametroURL('municipio');
+            const categoria = obtenerParametroURL('categoria');
+            
             const estado = document.getElementById('mensaje-estado');
+            const principal = document.getElementById('contenido-principal');
+            const vistaDetalle = document.getElementById('vista-detalle');
+            const vistaLista = document.getElementById('vista-lista');
 
-            if (lugar) {
-                document.getElementById('titulo-header').textContent = lugar.nombre;
-                document.getElementById('lugar-nombre').textContent = lugar.nombre;
-                document.getElementById('lugar-ubicacion').textContent = lugar.ubicacion;
-                document.getElementById('lugar-descripcion').textContent = lugar.descripcion;
+            // Configurar enlace del banner a restaurante.html
+            const enlaceRest = document.getElementById('enlace-restaurante');
+            enlaceRest.href = municipio ? `restaurante.html?municipio=${municipio}` : 'restaurante.html';
 
-                // Cargar imágenes del carrusel
-                const contenedorImagenes = document.getElementById('carrusel-imagenes');
-                let htmlImagenes = '';
-                lugar.imagenes.forEach(img => {
-                    htmlImagenes += `<div class="slide" style="background-image: url('${img}');"></div>`;
-                });
-                contenedorImagenes.innerHTML = htmlImagenes;
+            // ---------- MODO DETALLE POR ID ----------
+            if (idLugar) {
+                // Buscar el lugar en todo el árbol
+                let lugarEncontrado = null;
+                for (const muni in lugaresDB) {
+                    for (const cat in lugaresDB[muni]) {
+                        const arr = lugaresDB[muni][cat];
+                        const hallado = arr.find(p => p.id === idLugar);
+                        if (hallado) {
+                            lugarEncontrado = hallado;
+                            break;
+                        }
+                    }
+                    if (lugarEncontrado) break;
+                }
 
-                // Cargar servicios
-                const contenedorServicios = document.getElementById('contenedor-servicios');
-                let htmlServicios = '';
-                lugar.servicios.forEach(srv => {
-                    htmlServicios += `<span class="tag"><i class="fa-solid ${srv.icono}"></i> ${srv.nombre}</span>`;
-                });
-                contenedorServicios.innerHTML = htmlServicios;
+                if (lugarEncontrado) {
+                    document.getElementById('titulo-header').textContent = lugarEncontrado.nombre;
+                    document.getElementById('lugar-nombre').textContent = lugarEncontrado.nombre;
+                    document.getElementById('lugar-ubicacion').textContent = lugarEncontrado.ubicacion;
+                    document.getElementById('lugar-descripcion').textContent = lugarEncontrado.descripcion;
 
-                // Cargar comercios
-                const contenedorComercios = document.getElementById('contenedor-comercios');
-                let htmlComercios = '';
-                lugar.comercios.forEach(comercio => {
-                    const mensajeWs = encodeURIComponent(`Hola, vi tu servicio de ${comercio.producto} en Monbá QR. Quiero más información.`);
-                    htmlComercios += `
+                    // Imágenes carrusel
+                    const contImg = document.getElementById('carrusel-imagenes');
+                    contImg.innerHTML = lugarEncontrado.imagenes.map(img => 
+                        `<div class="slide" style="background-image: url('${img}');"></div>`
+                    ).join('');
+
+                    // Servicios
+                    const contServ = document.getElementById('contenedor-servicios');
+                    contServ.innerHTML = lugarEncontrado.servicios.map(srv =>
+                        `<span class="tag"><i class="fa-solid ${srv.icono}"></i> ${srv.nombre}</span>`
+                    ).join('');
+
+                    // Comercios
+                    const contCom = document.getElementById('contenedor-comercios');
+                    contCom.innerHTML = lugarEncontrado.comercios.map(com => {
+                        const msg = encodeURIComponent(`Hola, vi tu servicio de ${com.producto} en Monbá QR.`);
+                        return `
                         <div class="tarjeta-comercio">
                             <div class="comercio-header">
-                                <span class="comercio-nombre">${comercio.negocio}</span>
-                                <span class="comercio-precio">${comercio.precio}</span>
+                                <span class="comercio-nombre">${com.negocio}</span>
+                                <span class="comercio-precio">${com.precio}</span>
                             </div>
-                            <p class="comercio-desc">Ofrece: ${comercio.producto}</p>
-                            <a href="https://wa.me/${comercio.telefono}?text=${mensajeWs}" target="_blank" class="btn-contacto">
+                            <p class="comercio-desc">Ofrece: ${com.producto}</p>
+                            <a href="https://wa.me/${com.telefono}?text=${msg}" target="_blank" class="btn-contacto">
                                 <i class="fa-brands fa-whatsapp"></i> Contactar
                             </a>
-                        </div>
-                    `;
-                });
-                contenedorComercios.innerHTML = htmlComercios;
+                        </div>`;
+                    }).join('');
 
-                // Configurar enlace del banner restaurante (con municipio si existe)
-                const municipio = obtenerParametroURL('municipio') || '';
-                const enlaceRest = document.getElementById('enlace-restaurante');
-                enlaceRest.href = municipio ? `restaurante.html?municipio=${municipio}` : 'restaurante.html';
+                    // Botón Ruta
+                    document.getElementById('btn-ruta').onclick = () => window.open(lugarEncontrado.mapsNavegacion, '_blank');
+                    document.getElementById('btn-compartir').onclick = compartir;
+                    document.getElementById('btn-ver-qr').onclick = mostrarQR;
 
-                // Configurar botón Ruta
-                document.getElementById('btn-ruta').onclick = () => {
-                    if (lugar.mapsNavegacion) {
-                        window.open(lugar.mapsNavegacion, '_blank');
-                    } else {
-                        alert('Ubicación no disponible para ruta.');
-                    }
-                };
-
-                // Configurar botón Compartir
-                document.getElementById('btn-compartir').onclick = compartir;
-
-                // Configurar botón Ver QR
-                document.getElementById('btn-ver-qr').onclick = mostrarQR;
-
-                // Mostrar contenido
-                estado.style.display = 'none';
-                contenedor.style.display = 'block';
-            } else {
-                document.getElementById('titulo-header').textContent = "No encontrado";
-                estado.innerHTML = `<i class="fa-solid fa-circle-xmark fa-2x"></i><p style="margin-top: 15px;">Lugar no disponible.</p>`;
+                    vistaDetalle.style.display = 'block';
+                    vistaLista.style.display = 'none';
+                } else {
+                    document.getElementById('titulo-header').textContent = "No encontrado";
+                    estado.innerHTML = `<i class="fa-solid fa-circle-xmark fa-2x"></i><p>Lugar no disponible.</p>`;
+                    principal.style.display = 'block';
+                    return;
+                }
             }
+            // ---------- MODO LISTA POR MUNICIPIO Y CATEGORÍA ----------
+            else if (municipio && categoria) {
+                const lugaresMunicipio = lugaresDB[municipio];
+                if (lugaresMunicipio && lugaresMunicipio[categoria]) {
+                    const lista = lugaresMunicipio[categoria];
+                    document.getElementById('titulo-header').textContent = `${categoria.charAt(0).toUpperCase() + categoria.slice(1)} - ${municipio.replace(/-/g,' ')}`;
+                    document.getElementById('titulo-lista').textContent = `Resultados para "${categoria}" en ${municipio.replace(/-/g,' ')}`;
+
+                    const contLista = document.getElementById('contenedor-lista');
+                    contLista.innerHTML = lista.map(lugar => `
+                        <a href="directorio.html?id=${lugar.id}" class="tarjeta-lugar">
+                            <h4>${lugar.nombre}</h4>
+                            <p><i class="fa-solid fa-location-dot"></i> ${lugar.ubicacion}</p>
+                            <p>${lugar.descripcion}</p>
+                        </a>
+                    `).join('');
+
+                    vistaLista.style.display = 'block';
+                    vistaDetalle.style.display = 'none';
+                } else {
+                    document.getElementById('titulo-header').textContent = "Sin resultados";
+                    document.getElementById('titulo-lista').textContent = "No se encontraron lugares para esta categoría.";
+                    document.getElementById('contenedor-lista').innerHTML = '';
+                    vistaLista.style.display = 'block';
+                    vistaDetalle.style.display = 'none';
+                }
+            } else {
+                // Sin parámetros válidos
+                document.getElementById('titulo-header').textContent = "Directorio";
+                estado.innerHTML = `<i class="fa-solid fa-circle-info fa-2x"></i><p>Selecciona un municipio y categoría.</p>`;
+                principal.style.display = 'block';
+                return;
+            }
+
+            estado.style.display = 'none';
+            principal.style.display = 'block';
         }
 
         // Carrusel manual
         function moverCarrusel(direccion) {
             const carrusel = document.getElementById('carrusel-imagenes');
-            const anchoSlide = carrusel.clientWidth;
-            carrusel.scrollBy({ left: anchoSlide * direccion, behavior: 'smooth' });
+            if (carrusel) {
+                const ancho = carrusel.clientWidth;
+                carrusel.scrollBy({ left: ancho * direccion, behavior: 'smooth' });
+            }
         }
 
         // Compartir
