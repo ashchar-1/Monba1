@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil del Restaurante - Monbá QR</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --color-primario: #023047; /* Un azul más oscuro y elegante para negocios */
+            --color-secundario: #219ebc;
+            --color-naranja: #fb8500; /* Naranja para apetito/comida */
+            --color-arena: #ffb703;
+            --color-texto: #333333;
+            --color-blanco: #ffffff;
+            --color-gris: #f8f9fa;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--color-gris); color: var(--color-texto); overflow-x: hidden; }
+
+        /* Encabezado */
+        header {
+            background-color: transparent; position: absolute; top: 0; width: 100%;
+            padding: 15px 20px; display: flex; justify-content: space-between; z-index: 100;
+        }
+        .btn-volver, .btn-header { 
+            color: var(--color-blanco); font-size: 1.2rem; cursor: pointer; 
+            background: rgba(0,0,0,0.4); border: none; padding: 8px 12px; border-radius: 50%;
+        }
+
+        /* Foto de Portada (Hero) */
+        .portada-negocio {
+            width: 100%; height: 35vh;
+            background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');
+            background-size: cover; background-position: center;
+            position: relative;
+        }
+        .portada-overlay {
+            position: absolute; bottom: 0; width: 100%; height: 50%;
+            background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8));
+        }
+
+        /* Info Principal del Negocio (Sube encima de la foto) */
+        .info-negocio {
+            background-color: var(--color-blanco);
+            margin: -30px 15px 15px 15px; padding: 20px;
+            border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative; z-index: 10;
+        }
+        .info-negocio h1 { font-size: 1.6rem; color: var(--color-primario); margin-bottom: 5px; }
+        .estado-abierto { color: #2a9d8f; font-weight: bold; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; }
+        .descripcion { font-size: 0.95rem; color: #666; margin: 10px 0; }
+        
+        /* Barra de Acciones del Negocio */
+        .barra-acciones {
+            display: flex; justify-content: space-around; align-items: center;
+            margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;
+        }
+        .btn-accion {
+            background: none; border: none; color: var(--color-primario); font-size: 0.8rem;
+            display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer;
+        }
+        .btn-accion i {
+            font-size: 1.2rem; color: var(--color-secundario); background-color: #e0fbfc;
+            padding: 10px; border-radius: 50%; transition: 0.2s;
+        }
+        .btn-accion:active i { transform: scale(0.9); }
+
+        /* Menú del Restaurante */
+        .seccion-menu { padding: 10px 15px 30px 15px; }
+        .categoria-titulo {
+            font-size: 1.2rem; color: var(--color-primario); margin: 20px 0 10px 0;
+            border-bottom: 2px solid var(--color-arena); padding-bottom: 5px; display: inline-block;
+        }
+
+        .plato-tarjeta {
+            display: flex; background: var(--color-blanco); border-radius: 12px;
+            overflow: hidden; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .plato-img {
+            width: 100px; background-size: cover; background-position: center;
+        }
+        .plato-info {
+            padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: center;
+        }
+        .plato-nombre { font-size: 1.05rem; font-weight: bold; color: var(--color-texto); margin-bottom: 3px;}
+        .plato-desc { font-size: 0.85rem; color: #777; margin-bottom: 8px; line-height: 1.3;}
+        
+        .plato-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto;}
+        .plato-precio { font-weight: bold; color: var(--color-naranja); font-size: 1.1rem; }
+        
+        .btn-pedir {
+            background-color: #25D366; color: white; border: none; padding: 6px 12px;
+            border-radius: 20px; font-weight: bold; font-size: 0.85rem; cursor: pointer;
+            display: flex; align-items: center; gap: 5px; text-decoration: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <button onclick="history.back()" class="btn-volver"><i class="fa-solid fa-arrow-left"></i></button>
+        <button class="btn-header" onclick="compartir()"><i class="fa-solid fa-share-nodes"></i></button>
+    </header>
+
+    <main id="perfil-negocio" style="display: none;">
+        
+        <div class="portada-negocio" id="foto-portada">
+            <div class="portada-overlay"></div>
+        </div>
+
+        <div class="info-negocio">
+            <h1 id="nombre-negocio">Nombre Restaurante</h1>
+            <span class="estado-abierto"><i class="fa-solid fa-door-open"></i> Abierto ahora</span>
+            <p class="descripcion" id="desc-negocio">Descripción del restaurante.</p>
+            
+            <div class="barra-acciones">
+                <button class="btn-accion" onclick="alert('Abriendo Google Maps...')"><i class="fa-solid fa-route"></i> Cómo llegar</button>
+                <a href="#" id="btn-ws-general" class="btn-accion" style="text-decoration: none;"><i class="fa-brands fa-whatsapp"></i> Chat</a>
+                <button class="btn-accion" onclick="alert('Generando código QR del restaurante...')"><i class="fa-solid fa-qrcode"></i> Ver QR</button>
+            </div>
+        </div>
+
+        <div class="seccion-menu" id="contenedor-menu">
+            <!-- El menú se inyecta por JS -->
+        </div>
+
+    </main>
+
+    <div id="mensaje-estado" style="text-align: center; padding: 50px 20px; color: #666;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        <p style="margin-top: 15px;">Cargando perfil del negocio...</p>
+    </div>
+
+    <script>
+        // Simulación de Base de Datos para clientes de Monbá QR
+        const negociosDB = {
+            "la-desembocadura": {
+                nombre: "Restaurante La Desembocadura",
+                portada: "https://images.unsplash.com/photo-1544148103-0773bf10d330?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                descripcion: "El mejor pescado fresco de Machurucuto. Tradición oriental frente al mar con más de 15 años de experiencia.",
+                telefono: "584120000000",
+                menu: [
+                    {
+                        categoria: "Platos Principales",
+                        items: [
+                            { nombre: "Pargo Frito Playero", desc: "Acompañado de tostones, ensalada rallada y queso llanero.", precio: "$15", img: "https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" },
+                            { nombre: "Fosforera Oriental", desc: "Sopa levanta muertos con mariscos mixtos y toque de limón.", precio: "$10", img: "https://images.unsplash.com/photo-1548943487-a2e4e43b4859?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" }
+                        ]
+                    },
+                    {
+                        categoria: "Para Picar",
+                        items: [
+                            { nombre: "Ración de Tostones", desc: "Tostones playeros con ensalada y salsa de ajo de la casa.", precio: "$5", img: "https://images.unsplash.com/photo-1628840042765-356cda07504e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" },
+                            { nombre: "Empanadas de Cazón", desc: "Orden de 3 empanadas crujientes recién fritas.", precio: "$4", img: "https://images.unsplash.com/photo-1626082895617-2c6ad3dfdf38?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        function obtenerParametroURL(nombre) {
+            return new URLSearchParams(window.location.search).get(nombre);
+        }
+
+        function cargarNegocio() {
+            // Para probar sin URL, forzamos el id temporalmente. 
+            // En producción debe ser: const idNegocio = obtenerParametroURL('id');
+            const idNegocio = obtenerParametroURL('id') || "la-desembocadura"; 
+            const negocio = negociosDB[idNegocio];
+            
+            const contenedor = document.getElementById('perfil-negocio');
+            const estado = document.getElementById('mensaje-estado');
+
+            if (negocio) {
+                document.getElementById('foto-portada').style.backgroundImage = `url('${negocio.portada}')`;
+                document.getElementById('nombre-negocio').textContent = negocio.nombre;
+                document.getElementById('desc-negocio').textContent = negocio.descripcion;
+                
+                // Configurar enlace general de WhatsApp
+                document.getElementById('btn-ws-general').href = `https://wa.me/${negocio.telefono}?text=Hola, estoy viendo su perfil en Monbá QR y me gustaría hacer una consulta.`;
+
+                const contenedorMenu = document.getElementById('contenedor-menu');
+                let htmlMenu = '';
+
+                // Recorrer categorías y platos
+                negocio.menu.forEach(seccion => {
+                    htmlMenu += `<h3 class="categoria-titulo">${seccion.categoria}</h3>`;
+                    
+                    seccion.items.forEach(plato => {
+                        const msjPedido = encodeURIComponent(`Hola, vi el ${plato.nombre} en Monbá QR. Quisiera pedir uno, por favor.`);
+                        htmlMenu += `
+                            <div class="plato-tarjeta">
+                                <div class="plato-img" style="background-image: url('${plato.img}');"></div>
+                                <div class="plato-info">
+                                    <div class="plato-nombre">${plato.nombre}</div>
+                                    <div class="plato-desc">${plato.desc}</div>
+                                    <div class="plato-footer">
+                                        <span class="plato-precio">${plato.precio}</span>
+                                        <a href="https://wa.me/${negocio.telefono}?text=${msjPedido}" target="_blank" class="btn-pedir">
+                                            <i class="fa-brands fa-whatsapp"></i> Pedir
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                });
+
+                contenedorMenu.innerHTML = htmlMenu;
+                estado.style.display = 'none';
+                contenedor.style.display = 'block';
+            }
+        }
+
+        function compartir() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.getElementById('nombre-negocio').textContent,
+                    text: '¡Revisa este menú en Monbá QR!',
+                    url: window.location.href
+                });
+            } else {
+                alert("Copia este enlace para compartir el restaurante: " + window.location.href);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", cargarNegocio);
+    </script>
+</body>
+</html>
